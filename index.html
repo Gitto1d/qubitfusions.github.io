@@ -1115,15 +1115,32 @@
       window.scrollY > 50 ? '0 4px 30px rgba(0,0,0,0.4)' : 'none';
   });
 
-  // Submit button handler (placeholder)
-  function handleSubmit(btn) {
-    btn.textContent = '✓ Message Sent!';
-    btn.style.background = '#4db83e';
-    setTimeout(() => {
-      btn.textContent = 'Send Message →';
-      btn.style.background = '';
-    }, 3000);
+  async function handleSubmit(e) {
+  e.preventDefault();
+  const btn = document.getElementById('submitBtn');
+  const status = document.getElementById('form-status');
+  btn.textContent = 'Sending...';
+  btn.disabled = true;
+  try {
+    const res = await fetch(e.target.action, {
+      method: 'POST',
+      body: new FormData(e.target),
+      headers: { 'Accept': 'application/json' }
+    });
+    if (res.ok) {
+      status.textContent = 'Message sent! We will get back to you within 24 hours.';
+      status.style.display = 'block';
+      e.target.reset();
+    } else { throw new Error(); }
+  } catch {
+    status.textContent = 'Something went wrong. Please email us directly.';
+    status.style.color = '#ff6b6b';
+    status.style.display = 'block';
   }
+  btn.textContent = 'Send Message';
+  btn.disabled = false;
+}
+```
 </script>
 </body>
 </html>
